@@ -1,0 +1,1132 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# Best practice assessment Enterprise Dashboard"
+      },
+      "name": "text - 12"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{Subscription}"
+        ],
+        "parameters": [
+          {
+            "id": "5ccbaa77-2a42-4a07-a877-b5a3a6297703",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "includeAll": true,
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": [
+              "value::all"
+            ]
+          },
+          {
+            "id": "f932fba5-395b-423d-a9b0-538714e1e553",
+            "version": "KqlParameterItem/1.0",
+            "name": "LogAnalyticsWorkspace",
+            "type": 5,
+            "query": "where type =~ 'microsoft.operationalinsights/workspaces'\r\n| project id",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": null
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "name": "parameters - 7"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Filter by Resource Group / Location / Tags"
+      },
+      "name": "text - 12 - Copy"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{Subscription}"
+        ],
+        "parameters": [
+          {
+            "id": "0e4e05e8-fca2-438b-a3b6-dddbb25fe056",
+            "version": "KqlParameterItem/1.0",
+            "name": "ResourceGroup",
+            "type": 5,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc'\r\n| distinct resourceGroup\r\n| order by ['resourceGroup'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              "value::all"
+            ]
+          },
+          {
+            "version": "KqlParameterItem/1.0",
+            "name": "Location",
+            "type": 5,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc'\r\n| distinct location\r\n| order by ['location'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              "value::all"
+            ],
+            "id": "dc835bc7-9fb9-4fbb-87b5-aae0c2843214"
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "customWidth": "25",
+      "name": "parameters - 7 - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{LogAnalyticsWorkspace}"
+        ],
+        "parameters": [
+          {
+            "id": "c61ad693-b0ac-4b67-9cd0-94f28998b0a3",
+            "version": "KqlParameterItem/1.0",
+            "name": "tagKeyFilter",
+            "label": "Tag",
+            "type": 2,
+            "query": "resources\r\n| where type =~ 'microsoft.hybridcompute/machines'\r\n| where isnotempty(tags)\r\n| project tags\r\n| mvexpand tags\r\n| extend tagKey = tostring(bag_keys(tags)[0])\r\n//| extend tagValue = tostring(tags[tagKey])\r\n| distinct tagKey//, tagValue",
+            "crossComponentResources": [
+              "{LogAnalyticsWorkspace}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.operationalinsights/workspaces",
+            "value": "ChangeSQLLicense"
+          },
+          {
+            "version": "KqlParameterItem/1.0",
+            "name": "tagValueFilter",
+            "label": "Value",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type =~ 'microsoft.hybridcompute/machines'\r\n| where isnotempty(tags)\r\n| project tags\r\n| mvexpand tags\r\n| extend tagKey = tostring(bag_keys(tags)[0])\r\n| extend tagValue = tostring(tags[tagKey])\r\n| distinct  tagValue",
+            "crossComponentResources": [
+              "{LogAnalyticsWorkspace}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "id": "54e760e5-efb0-4833-aa39-61df95e26606"
+          }
+        ],
+        "style": "above",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "customWidth": "35",
+      "name": "parameters - 2b - tags",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### SQL Server specs"
+      },
+      "name": "text - 12"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{Subscription}"
+        ],
+        "parameters": [
+          {
+            "id": "7ebf6f60-f7cf-48fd-9927-bbc2563e8671",
+            "version": "KqlParameterItem/1.0",
+            "name": "SQLVersion",
+            "label": "SQL Server Version",
+            "type": 5,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| extend SQLVersion = tostring(properties.version)\r\n//| project SQLVersion\r\n| distinct SQLVersion\r\n| order by ['SQLVersion'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              "value::all"
+            ]
+          },
+          {
+            "id": "31de902b-65ef-4548-9c12-6bf06fc7b33a",
+            "version": "KqlParameterItem/1.0",
+            "name": "SQLEdition",
+            "label": "SQL Server Edition",
+            "type": 5,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| extend SQLEdition = tostring(properties.edition)\r\n//| project SQLVersion\r\n| distinct SQLEdition\r\n| order by ['SQLEdition'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": null
+          },
+          {
+            "version": "KqlParameterItem/1.0",
+            "name": "LicenceType",
+            "label": "License Type",
+            "type": 5,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| extend SQLLicense = tostring(properties.licenseType)\r\n//| project SQLVersion\r\n| distinct SQLLicense\r\n| order by ['SQLLicense'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "id": "de4401f8-b398-4715-9c35-97beb979659d",
+            "value": null
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "customWidth": "25",
+      "name": "parameters - 3 - SQLServerVersionEditionLicenseType",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{Subscription}"
+        ],
+        "parameters": [
+          {
+            "id": "1748c232-7607-4253-a298-59a8b83b3a62",
+            "version": "KqlParameterItem/1.0",
+            "name": "SQLVCores",
+            "label": "vCores",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| extend SQLServervCores = tostring(properties.vCore)\r\n| extend vCores = toint(properties.vCore)\r\n| distinct vCores, SQLServervCores\r\n| order by ['vCores'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": null
+          },
+          {
+            "id": "a6b7b0ca-6ca2-469d-abd8-91379242d285",
+            "version": "KqlParameterItem/1.0",
+            "name": "SQLMemory",
+            "label": "Memory (MB)",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| extend SQLServerMemory = toint(properties.maxServerMemoryMB)\r\n| extend Memory = tostring(properties.maxServerMemoryMB)\r\n| where isnotnull(SQLServerMemory)\r\n| distinct SQLServerMemory, Memory\r\n| order by ['SQLServerMemory'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": null
+          },
+          {
+            "version": "KqlParameterItem/1.0",
+            "name": "Mem2Core",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| extend SQLServerMemory = toint(properties.maxServerMemoryMB)\r\n| extend Memory = tostring(properties.maxServerMemoryMB)\r\n| where isnotnull(SQLServerMemory)\r\n| extend SQLServervCores = tostring(properties.vCore)\r\n| extend vCores = toint(properties.vCore)\r\n| extend Mem2Core = toint(Memory) / vCores\r\n// | distinct SQLServerMemory, Memory, Mem2Core\r\n| where Mem2Core in (1024, 2048, 4096, 8192, 16384, 32768)\r\n| distinct Mem2Core\r\n| order by ['Mem2Core'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "id": "16d972f2-d620-4be5-9ce6-bc259a4399fd",
+            "value": null
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "customWidth": "20",
+      "name": "parameters - 3 - SQLServerVersionEditionLicenseType - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{Subscription}"
+        ],
+        "parameters": [
+          {
+            "id": "e8a49fa7-125b-4abf-ad9e-2451ea09cf7b",
+            "version": "KqlParameterItem/1.0",
+            "name": "ManagedBy",
+            "label": "Managed By",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| distinct managedBy\r\n| order by ['managedBy'] asc",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": null
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "customWidth": "25",
+      "name": "parameters - 3 - SQLServerVersionEditionLicenseType - Copy - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "crossComponentResources": [
+          "{Subscription}"
+        ],
+        "parameters": [
+          {
+            "id": "69412e7b-d724-4b7f-aad2-7c1e00dd6f35",
+            "version": "KqlParameterItem/1.0",
+            "name": "FailoverCluster",
+            "label": "Failover Cluster",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| project ColAlwaysOnRole = tostring(properties.alwaysOnRole), ColfailoverCluster = tostring(properties.failoverCluster), ColIsHADREnabled = tostring(properties.isHadrEnabled)\r\n| distinct ColfailoverCluster\r\n\r\n",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "0f1b5d2a-ef13-4683-8169-5db35574ab50",
+            "version": "KqlParameterItem/1.0",
+            "name": "IsHADR",
+            "label": "Is HA/DR",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n| project ColAlwaysOnRole = tostring(properties.alwaysOnRole), ColfailoverCluster = tostring(properties.failoverCluster), ColIsHADREnabled = tostring(properties.isHadrEnabled)\r\n| distinct ColIsHADREnabled\r\n",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "5bee201e-2f8c-4a6c-83fb-a7c3e72080f3",
+            "version": "KqlParameterItem/1.0",
+            "name": "AlwaysOnRole",
+            "label": "AlwaysOn Role",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "resources\r\n| where type contains 'arc' and type contains 'sqlserverinstances'\r\n| where type !contains 'databases'\r\n//| distinct managedBy\r\n| project ColAlwaysOnRole = tostring(properties.alwaysOnRole), ColfailoverCluster = tostring(properties.failoverCluster), ColIsHADREnabled = tostring(properties.isHadrEnabled)\r\n| distinct ColAlwaysOnRole\r\n",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "selectAllValue": "All",
+              "showDefault": false
+            },
+            "defaultValue": "value::all",
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": null
+          }
+        ],
+        "style": "pills",
+        "queryType": 1,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "customWidth": "20",
+      "name": "parameters - 3 - SQLServerVersionEditionLicenseType - Copy - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SqlAssessment_CL\r\n| extend asmt = parse_csv(RawData)\r\n| distinct _ResourceId, InstanceName=tostring(asmt[11]), AsmtTime = todatetime(asmt[0]), AsmtId=tostring(asmt[1])\r\n| summarize AsmtTime = strcat(format_datetime(max(AsmtTime), 'yyyy-MM-dd hh:mm tt'), ' UTC'), count() by _ResourceId, InstanceName, AsmtId\r\n| summarize LastRunTime = arg_max(AsmtTime, AsmtId), TotalRuns = count() by _ResourceId, InstanceName\r\n| sort by _ResourceId asc, InstanceName asc",
+        "size": 3,
+        "title": "BPA runs on each server",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "{LogAnalyticsWorkspace}"
+        ],
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "LastRunTime",
+              "formatter": 7,
+              "formatOptions": {
+                "linkTarget": "OpenBlade",
+                "bladeOpenContext": {
+                  "bladeName": "WorkbookViewerBlade",
+                  "extensionName": "AppInsightsExtension",
+                  "bladeJsonParameters": "{\r\n  \"ComponentId\": \"{_ResourceId_column}\",\r\n  \"ResourceIds\": [\r\n    \"{LogAnalyticsWorkspace}\"\r\n  ],\r\n  \"ConfigurationId\": \"Community-Workbooks/Azure Arc/SQL Server\",\r\n  \"NotebookParams\": {\r\n    \"VmResourceId\": \"\\\"{_ResourceId_column}\\\"\",\r\n    \"AssessmentId\": \"\\\"{AsmtId_column}\\\"\",\r\n    \"instanceName\": \"\\\"{InstanceName_column}\\\"\"\r\n  }\r\n}"
+                }
+              },
+              "tooltipFormat": {
+                "tooltip": "Open BPA details"
+              }
+            },
+            {
+              "columnMatch": "AsmtId",
+              "formatter": 5
+            }
+          ]
+        },
+        "sortBy": []
+      },
+      "name": "query - 16"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SqlAssessment_CL\r\n| extend asmt = parse_csv(RawData)\r\n| extend\r\n    AsmtId=tostring(asmt[1]),\r\n    CheckId=tostring(asmt[2]),\r\n    DisplayString=asmt[3],\r\n    Description=tostring(asmt[4]),\r\n    HelpLink=asmt[5],\r\n    TargetType=case(asmt[6] == 1, \"Server\", asmt[6] == 2, \"Database\", \"\"),\r\n    TargetName=tostring(asmt[7]), \r\n    Severity=case(asmt[8] == 30, \"High\", asmt[8] == 20, \"Medium\", asmt[8] == 10, \"Low\", asmt[8] == 0, \"Information\", asmt[8] == 1, \"Warning\", asmt[8] == 2, \"Critical\", \"Passed\"),\r\n    Message=tostring(asmt[9]),\r\n    TagsArr=split(tostring(asmt[10]), \",\"),\r\n    Sev = toint(asmt[8])\r\n    | order by CheckId, _ResourceId\r\n    | join kind=inner\r\n    (\r\n    SqlAssessment_CL\r\n    | extend asmt = parse_csv(RawData)\r\n    | extend\r\n        AsmtId=tostring(asmt[1])   \r\n    | summarize arg_max(TimeGenerated, *) by _ResourceId\r\n    | project AsmtId\r\n    ) on AsmtId\r\n    |where Sev >= 0\r\n    | summarize count() by Severity, Sev\r\n    | order by Sev\r\n    | project Severity, Count = count_",
+        "size": 3,
+        "title": "Issues by severity",
+        "exportMultipleValues": true,
+        "exportedParameters": [
+          {
+            "fieldName": "Sev",
+            "parameterName": "Sev",
+            "parameterType": 1
+          },
+          {
+            "fieldName": "Severity",
+            "parameterName": "severity",
+            "parameterType": 1
+          }
+        ],
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "{LogAnalyticsWorkspace}"
+        ],
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Severity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Medium",
+                    "representation": "Sev2",
+                    "text": "Medium"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Information",
+                    "representation": "1",
+                    "text": "Information"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "High",
+                    "representation": "Sev0",
+                    "text": "High"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Low",
+                    "representation": "Sev3",
+                    "text": "Low"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Critical",
+                    "representation": "Sev0",
+                    "text": "Critical"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Passed",
+                    "representation": "success",
+                    "text": "Passed"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Warning",
+                    "representation": "Sev2",
+                    "text": "Warning"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "unknown",
+                    "text": "Unknown"
+                  }
+                ],
+                "customColumnWidthSetting": "16ch"
+              }
+            },
+            {
+              "columnMatch": "Sev",
+              "formatter": 8,
+              "formatOptions": {
+                "min": 0,
+                "max": 30,
+                "palette": "greenRed"
+              }
+            }
+          ]
+        },
+        "tileSettings": {
+          "showBorder": false,
+          "titleContent": {
+            "columnMatch": "Severity",
+            "formatter": 1
+          },
+          "leftContent": {
+            "columnMatch": "Count",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "auto"
+            },
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        },
+        "chartSettings": {
+          "seriesLabelSettings": [
+            {
+              "seriesName": "Medium",
+              "color": "orange"
+            },
+            {
+              "seriesName": "Low",
+              "color": "blue"
+            },
+            {
+              "seriesName": "High",
+              "color": "redBright"
+            },
+            {
+              "seriesName": "Information",
+              "color": "blueDark"
+            }
+          ],
+          "ySettings": {
+            "numberFormatSettings": {
+              "unit": 0,
+              "options": {
+                "style": "decimal",
+                "useGrouping": true
+              }
+            }
+          }
+        },
+        "mapSettings": {
+          "locInfo": "LatLong",
+          "sizeSettings": "Count",
+          "sizeAggregation": "Sum",
+          "legendMetric": "Count",
+          "legendAggregation": "Sum",
+          "itemColorSettings": {
+            "type": "heatmap",
+            "colorAggregation": "Sum",
+            "nodeColorField": "Count",
+            "heatmapPalette": "greenRed"
+          }
+        },
+        "textSettings": {
+          "style": "bignumber"
+        }
+      },
+      "name": "query - 4"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let SeverityFilter = dynamic([{severity}]);\r\nSqlAssessment_CL\r\n| extend asmt = parse_csv(RawData)\r\n| extend\r\n    AsmtId=tostring(asmt[1]),\r\n    CheckId=tostring(asmt[2]),\r\n    DisplayString=asmt[3],\r\n    Description=tostring(asmt[4]),\r\n    HelpLink=asmt[5],\r\n    TargetType=case(asmt[6] == 1, \"Server\", asmt[6] == 2, \"Database\", \"\"),\r\n    TargetName=tostring(asmt[7]), \r\n    Severity=case(asmt[8] == 30, \"High\", asmt[8] == 20, \"Medium\", asmt[8] == 10, \"Low\", asmt[8] == 0, \"Information\", asmt[8] == 1, \"Warning\", asmt[8] == 2, \"Critical\", \"Passed\"),\r\n    Message=tostring(asmt[9]),\r\n    TagsArr=split(tostring(asmt[10]), \",\"),\r\n    Sev = toint(asmt[8])\r\n    | order by CheckId, _ResourceId\r\n    | join kind=inner\r\n    (\r\n    SqlAssessment_CL\r\n    | extend asmt = parse_csv(RawData)\r\n    | extend\r\n        AsmtId=tostring(asmt[1])   \r\n    | summarize arg_max(TimeGenerated, *) by _ResourceId\r\n    | project AsmtId\r\n    ) on AsmtId\r\n    |where Severity in (SeverityFilter)\r\n    and TargetType == \"Server\"\r\n    | order by Sev, CheckId\r\n    | summarize count() by TargetName \r\n",
+        "size": 3,
+        "title": "Issues by server",
+        "noDataMessage": "No result with the selected Severity",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "{LogAnalyticsWorkspace}"
+        ],
+        "visualization": "piechart",
+        "chartSettings": {
+          "seriesLabelSettings": [
+            {
+              "seriesName": "Protected",
+              "color": "green"
+            },
+            {
+              "seriesName": "Unknown",
+              "color": "gray"
+            },
+            {
+              "seriesName": "Not Protected",
+              "color": "redBright"
+            }
+          ]
+        }
+      },
+      "customWidth": "50",
+      "name": "query - 4 - Copy"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let SeverityFilter = dynamic([{severity}]);\r\nSqlAssessment_CL\r\n| extend asmt = parse_csv(RawData)\r\n| extend\r\n    AsmtId=tostring(asmt[1]),\r\n    CheckId=tostring(asmt[2]),\r\n    DisplayString=asmt[3],\r\n    Description=tostring(asmt[4]),\r\n    HelpLink=asmt[5],\r\n    TargetType=case(asmt[6] == 1, \"Server\", asmt[6] == 2, \"Database\", \"\"),\r\n    TargetName=tostring(asmt[7]), \r\n    Severity=case(asmt[8] == 30, \"High\", asmt[8] == 20, \"Medium\", asmt[8] == 10, \"Low\", asmt[8] == 0, \"Information\", asmt[8] == 1, \"Warning\", asmt[8] == 2, \"Critical\", \"Passed\"),\r\n    Message=tostring(asmt[9]),\r\n    TagsArr=split(tostring(asmt[10]), \",\"),\r\n    Sev = toint(asmt[8])\r\n    | order by CheckId, _ResourceId\r\n    | join kind=inner\r\n    (\r\n    SqlAssessment_CL\r\n    | extend asmt = parse_csv(RawData)\r\n    | extend\r\n        AsmtId=tostring(asmt[1])   \r\n    | summarize arg_max(TimeGenerated, *) by _ResourceId\r\n    | project AsmtId\r\n    ) on AsmtId\r\n    |where Sev >= 0   \r\n    and TargetType == \"Database\"\r\n    and Severity in (SeverityFilter)\r\n    | order by Sev, CheckId\r\n    | summarize count() by TargetName \r\n",
+        "size": 3,
+        "title": "Issues by Database",
+        "noDataMessage": "No result with the selected Severity",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "{LogAnalyticsWorkspace}"
+        ],
+        "visualization": "piechart"
+      },
+      "customWidth": "50",
+      "name": "query - 4 - Copy - Copy"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let SeverityFilter = dynamic([{severity}]);\r\nSqlAssessment_CL\r\n| extend asmt = parse_csv(RawData)\r\n| extend\r\n    AsmtId=tostring(asmt[1]),\r\n    CheckId=tostring(asmt[2]),\r\n    DisplayString=asmt[3],\r\n    Description=tostring(asmt[4]),\r\n    HelpLink=asmt[5],\r\n    TargetType=case(asmt[6] == 1, \"Server\", asmt[6] == 2, \"Database\", \"\"),\r\n    TargetName=tostring(asmt[7]), \r\n    Severity=case(asmt[8] == 30, \"High\", asmt[8] == 20, \"Medium\", asmt[8] == 10, \"Low\", asmt[8] == 0, \"Information\", asmt[8] == 1, \"Warning\", asmt[8] == 2, \"Critical\", \"Passed\"),\r\n    Message=tostring(asmt[9]),\r\n    TagsArr=split(tostring(asmt[10]), \",\"),\r\n    Sev = toint(asmt[8])\r\n    | order by CheckId, _ResourceId\r\n    | join kind=inner\r\n    (\r\n    SqlAssessment_CL\r\n    | extend asmt = parse_csv(RawData)\r\n    | extend\r\n        AsmtId=tostring(asmt[1])   \r\n    | summarize arg_max(TimeGenerated, *) by _ResourceId\r\n    | project AsmtId\r\n    ) on AsmtId\r\n    |where Sev >= 0   \r\n    and Severity in (SeverityFilter)\r\n    | project Sev, CheckId, Description, _ResourceId, Severity, TargetType, TargetName\r\n    | summarize count() by Sev, Severity, TargetType, CheckId\r\n    | project Sev, Severity, TargetType, CheckId, count_\r\n    | order by Sev, TargetType, CheckId\r\n",
+        "size": 3,
+        "title": "Check summary",
+        "noDataMessage": "No result with the selected Severity",
+        "exportFieldName": "CheckId",
+        "exportParameterName": "CheckId",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "{LogAnalyticsWorkspace}"
+        ],
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Sev",
+              "formatter": 5
+            },
+            {
+              "columnMatch": "Severity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Medium",
+                    "representation": "Sev2",
+                    "text": "Medium"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Information",
+                    "representation": "1",
+                    "text": "Information"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "High",
+                    "representation": "Sev0",
+                    "text": "High"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Low",
+                    "representation": "Sev3",
+                    "text": "Low"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Critical",
+                    "representation": "Sev0",
+                    "text": "Critical"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Passed",
+                    "representation": "success",
+                    "text": "Passed"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Warning",
+                    "representation": "Sev2",
+                    "text": "Warning"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "unknown",
+                    "text": "Unknown"
+                  }
+                ],
+                "customColumnWidthSetting": "16ch"
+              }
+            }
+          ]
+        },
+        "sortBy": []
+      },
+      "name": "query - 8"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SqlAssessment_CL\r\n| extend asmt = parse_csv(RawData)\r\n| extend\r\n    AsmtId=tostring(asmt[1]),\r\n    CheckId=tostring(asmt[2]),\r\n    DisplayString=asmt[3],\r\n    Description=tostring(asmt[4]),\r\n    HelpLink=asmt[5],\r\n    TargetType=case(asmt[6] == 1, \"Server\", asmt[6] == 2, \"Database\", \"\"),\r\n    TargetName=tostring(asmt[7]), \r\n    Severity=case(asmt[8] == 30, \"High\", asmt[8] == 20, \"Medium\", asmt[8] == 10, \"Low\", asmt[8] == 0, \"Information\", asmt[8] == 1, \"Warning\", asmt[8] == 2, \"Critical\", \"Passed\"),\r\n    Message=tostring(asmt[9]),\r\n    TagsArr=split(tostring(asmt[10]), \",\"),\r\n    Sev = toint(asmt[8])\r\n| order by CheckId, _ResourceId\r\n| join kind=inner\r\n    (\r\n    SqlAssessment_CL\r\n    | extend asmt = parse_csv(RawData)\r\n    | extend\r\n        AsmtId=tostring(asmt[1])   \r\n    | summarize arg_max(TimeGenerated, *) by _ResourceId\r\n    | project AsmtId\r\n    )\r\n    on AsmtId\r\n| where Sev >= 0 and CheckId == \"{CheckId}\" \r\n| project _ResourceId, tostring(DisplayString), TargetType, CheckId, Severity\r\n| summarize count() by _ResourceId, tostring(DisplayString), TargetType, CheckId, Severity\r\n| order by CheckId",
+        "size": 3,
+        "title": "Check details",
+        "exportFieldName": "_ResourceId",
+        "exportParameterName": "_ResourceId",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "{LogAnalyticsWorkspace}"
+        ],
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Severity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Medium",
+                    "representation": "Sev2",
+                    "text": "Medium"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Information",
+                    "representation": "1",
+                    "text": "Information"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "High",
+                    "representation": "Sev0",
+                    "text": "High"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Low",
+                    "representation": "Sev3",
+                    "text": "Low"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Critical",
+                    "representation": "Sev0",
+                    "text": "Critical"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Passed",
+                    "representation": "success",
+                    "text": "Passed"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Warning",
+                    "representation": "Sev2",
+                    "text": "Warning"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "unknown",
+                    "text": "Unknown"
+                  }
+                ],
+                "customColumnWidthSetting": "16ch"
+              }
+            },
+            {
+              "columnMatch": "createdAt",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "21.1429ch"
+              }
+            },
+            {
+              "columnMatch": "AzureArcServer",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "20.1429ch"
+              }
+            },
+            {
+              "columnMatch": "SQLInstance",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "23.4286ch"
+              }
+            },
+            {
+              "columnMatch": "version",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "21ch"
+              }
+            },
+            {
+              "columnMatch": "currentVersion",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "20ch"
+              }
+            },
+            {
+              "columnMatch": "patchLevel",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "17ch"
+              }
+            },
+            {
+              "columnMatch": "edition",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "11.4286ch"
+              }
+            },
+            {
+              "columnMatch": "vcores",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "9.7143ch"
+              }
+            },
+            {
+              "columnMatch": "subscriptionId",
+              "formatter": 13,
+              "formatOptions": {
+                "linkTarget": "Resource",
+                "showIcon": true,
+                "customColumnWidthSetting": "26.5714ch"
+              }
+            },
+            {
+              "columnMatch": "licenseType",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "14.4286ch"
+              }
+            },
+            {
+              "columnMatch": "azureDefenderStatus",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "25ch"
+              }
+            }
+          ],
+          "rowLimit": 500,
+          "filter": true,
+          "sortBy": [
+            {
+              "itemKey": "DisplayString",
+              "sortOrder": 1
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "DisplayString",
+            "sortOrder": 1
+          }
+        ]
+      },
+      "name": "query - 1"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SqlAssessment_CL\r\n| extend asmt = parse_csv(RawData)\r\n| extend\r\n    AsmtId=tostring(asmt[1]),\r\n    CheckId=tostring(asmt[2]),\r\n    DisplayString=asmt[3],\r\n    Description=tostring(asmt[4]),\r\n    HelpLink=asmt[5],\r\n    TargetType=case(asmt[6] == 1, \"Server\", asmt[6] == 2, \"Database\", \"\"),\r\n    TargetName=tostring(asmt[7]), \r\n    Severity=case(asmt[8] == 30, \"High\", asmt[8] == 20, \"Medium\", asmt[8] == 10, \"Low\", asmt[8] == 0, \"Information\", asmt[8] == 1, \"Warning\", asmt[8] == 2, \"Critical\", \"Passed\"),\r\n    Message=tostring(asmt[9]),\r\n    TagsArr=split(tostring(asmt[10]), \",\"),\r\n    Sev = toint(asmt[8])\r\n    | order by CheckId, _ResourceId\r\n    | join kind=inner\r\n    (\r\n    SqlAssessment_CL\r\n    | extend asmt = parse_csv(RawData)\r\n    | extend\r\n        AsmtId=tostring(asmt[1])   \r\n    | summarize arg_max(TimeGenerated, *) by _ResourceId\r\n    | project AsmtId\r\n    ) on AsmtId\r\n    | where Sev >= 0\r\n    | project CheckId, Description, _ResourceId, Severity, TargetType, TargetName\r\n    | where CheckId == \"{CheckId}\" and _ResourceId == \"{_ResourceId}\" \r\n    | order by TargetType, CheckId\r\n",
+        "size": 3,
+        "exportFieldName": "CheckId",
+        "exportParameterName": "CheckId",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "{LogAnalyticsWorkspace}"
+        ],
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Severity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Medium",
+                    "representation": "Sev2",
+                    "text": "Medium"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Information",
+                    "representation": "1",
+                    "text": "Information"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "High",
+                    "representation": "Sev0",
+                    "text": "High"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Low",
+                    "representation": "Sev3",
+                    "text": "Low"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Critical",
+                    "representation": "Sev0",
+                    "text": "Critical"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Passed",
+                    "representation": "success",
+                    "text": "Passed"
+                  },
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Warning",
+                    "representation": "Sev2",
+                    "text": "Warning"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "unknown",
+                    "text": "Unknown"
+                  }
+                ],
+                "customColumnWidthSetting": "16ch"
+              }
+            }
+          ]
+        }
+      },
+      "name": "query - 8"
+    }
+  ],
+  "fallbackResourceIds": [
+    "azure monitor"
+  ],
+  "fromTemplateId": "sentinel-UserWorkbook",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
